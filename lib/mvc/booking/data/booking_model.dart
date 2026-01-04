@@ -32,13 +32,13 @@ class Booking extends Equatable {
 
   factory Booking.fromJson(Map<String, dynamic> json) {
     return Booking(
-      id: json['id'] ?? 0,
-      userId: json['user_id'] ?? 0,
-      scheduleId: json['schedule_id'] ?? 0,
-      status: json['status'] ?? 'pending',
-      complaint: json['complaint'],
-      notes: json['notes'],
-      cancelReason: json['cancel_reason'],
+      id: _parseInt(json['id']) ?? 0,
+      userId: _parseInt(json['user_id']) ?? 0,
+      scheduleId: _parseInt(json['schedule_id']) ?? 0,
+      status: json['status']?.toString() ?? 'pending',
+      complaint: json['complaint']?.toString(),
+      notes: json['notes']?.toString(),
+      cancelReason: json['cancel_reason']?.toString(),
       schedule: json['schedule'] != null
           ? Schedule.fromJson(json['schedule'])
           : null,
@@ -47,9 +47,18 @@ class Booking extends Equatable {
           ? Payment.fromJson(json['payment'])
           : null,
       createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'])
+          ? DateTime.tryParse(json['created_at'].toString())
           : null,
     );
+  }
+
+  /// Helper untuk parse int dengan aman
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   String get statusLabel {
@@ -122,14 +131,25 @@ class Payment extends Equatable {
 
   factory Payment.fromJson(Map<String, dynamic> json) {
     return Payment(
-      id: json['id'] ?? 0,
-      bookingId: json['booking_id'] ?? 0,
+      id: _parsePaymentInt(json['id']) ?? 0,
+      bookingId: _parsePaymentInt(json['booking_id']) ?? 0,
       amount: _parseDouble(json['amount']),
-      paymentMethod: json['payment_method'] ?? '',
-      status: json['status'] ?? 'pending',
-      paymentCode: json['payment_code'],
-      paidAt: json['paid_at'] != null ? DateTime.parse(json['paid_at']) : null,
+      paymentMethod: json['payment_method']?.toString() ?? '',
+      status: json['status']?.toString() ?? 'pending',
+      paymentCode: json['payment_code']?.toString(),
+      paidAt: json['paid_at'] != null
+          ? DateTime.tryParse(json['paid_at'].toString())
+          : null,
     );
+  }
+
+  /// Helper untuk parse int dengan aman
+  static int? _parsePaymentInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   String get formattedAmount {

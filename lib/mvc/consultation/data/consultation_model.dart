@@ -124,15 +124,24 @@ class ConsultationFeedback extends Equatable {
 
   factory ConsultationFeedback.fromJson(Map<String, dynamic> json) {
     return ConsultationFeedback(
-      id: json['id'] ?? 0,
-      consultationId: json['consultation_id'] ?? 0,
-      rating: json['rating'] ?? 0,
+      id: _parseFeedbackInt(json['id']) ?? 0,
+      consultationId: _parseFeedbackInt(json['consultation_id']) ?? 0,
+      rating: _parseFeedbackInt(json['rating']) ?? 0,
       comment: json['comment']?.toString(),
       isAnonymous: json['is_anonymous'] == true || json['is_anonymous'] == 1,
       createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'].toString())
           : null,
     );
+  }
+
+  /// Helper untuk parse int dengan aman
+  static int? _parseFeedbackInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is double) return value.toInt();
+    if (value is String) return int.tryParse(value);
+    return null;
   }
 
   @override

@@ -157,18 +157,18 @@ class Schedule extends Equatable {
 
       final months = [
         '',
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
+        'Januari',
+        'Februari',
+        'Maret',
+        'April',
         'Mei',
-        'Jun',
-        'Jul',
-        'Agt',
-        'Sep',
-        'Okt',
-        'Nov',
-        'Des',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember',
       ];
       final day = int.parse(parts[2]);
       final month = int.parse(parts[1]);
@@ -179,7 +179,28 @@ class Schedule extends Equatable {
     }
   }
 
-  String get formattedTime => '$startTime - $endTime';
+  /// Helper untuk format waktu dari ISO atau HH:mm:ss
+  String _formatTime(String time) {
+    try {
+      // Handle ISO 8601 format (2026-01-05T09:00:00.000000Z)
+      if (time.contains('T')) {
+        final timePart = time.split('T')[1];
+        final cleanTime = timePart.split('.')[0]; // Remove microseconds
+        final parts = cleanTime.split(':');
+        return '${parts[0]}:${parts[1]}'; // HH:mm
+      }
+      // Handle HH:mm:ss format
+      if (time.contains(':')) {
+        final parts = time.split(':');
+        return '${parts[0]}:${parts[1]}'; // HH:mm
+      }
+      return time;
+    } catch (e) {
+      return time;
+    }
+  }
+
+  String get formattedTime => '${_formatTime(startTime)} - ${_formatTime(endTime)}';
 
   String get consultationTypeLabel {
     switch (consultationType) {
